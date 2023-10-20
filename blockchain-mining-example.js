@@ -32,7 +32,7 @@ class Block{
             this.nounce++;
             this.hash = this.calculateHash();
             console.log("calculate nounce : "+ this.nounce + " hash : "+ this.hash);
-            await this.sleep(100);
+            // await this.sleep(100);
         }
         console.log("Block Mined: "+ this.hash);
     }
@@ -41,7 +41,7 @@ class Block{
 class Blockchain{
     constructor(){
         this.chain = [this.createGenesisBlock()];
-        this.dificulty = 2;
+        this.dificulty = 3;
         this.pendingTransactions = [];
         this.minningReward = 5;
     }
@@ -105,22 +105,24 @@ class Blockchain{
 
     
 }
+
+module.exports = { Blockchain, Transaction };
 // Contoh penggunaan blockchain
-const myCoin = new Blockchain();
+// const myCoin = new Blockchain();
 
-myCoin.createTransaction(new Transaction('address1', 'address2', 100));
-myCoin.createTransaction(new Transaction('address2', 'address1', 50));
+// myCoin.createTransaction(new Transaction('address1', 'address2', 100));
+// myCoin.createTransaction(new Transaction('address2', 'address1', 50));
 
-console.log('Memulai proses penambangan...');
-myCoin.minePendingTransactions('my-reward-address');
+// console.log('Memulai proses penambangan...');
+// myCoin.minePendingTransactions('my-reward-address');
 
-console.log('\nSaldo alamat address1: ' + myCoin.getBalanceOfAddress('address1'));
-console.log('Saldo alamat address2: ' + myCoin.getBalanceOfAddress('address2'));
-console.log('Saldo alamat my-reward-address: ' + myCoin.getBalanceOfAddress('my-reward-address'));
+// console.log('\nSaldo alamat address1: ' + myCoin.getBalanceOfAddress('address1'));
+// console.log('Saldo alamat address2: ' + myCoin.getBalanceOfAddress('address2'));
+// console.log('Saldo alamat my-reward-address: ' + myCoin.getBalanceOfAddress('my-reward-address'));
 
-console.log('\nMemulai proses penambangan lagi...');
-myCoin.minePendingTransactions('my-reward-address');
+// console.log('\nMemulai proses penambangan lagi...');
+// myCoin.minePendingTransactions('my-reward-address');
 
-console.log('\nSaldo alamat my-reward-address setelah penambangan kedua: ' + myCoin.getBalanceOfAddress('my-reward-address'));
+// console.log('\nSaldo alamat my-reward-address setelah penambangan kedua: ' + myCoin.getBalanceOfAddress('my-reward-address'));
 
-console.log('\nIs blockchain valid? ' + myCoin.isChainValid());
+// console.log('\nIs blockchain valid? ' + myCoin.isChainValid());
