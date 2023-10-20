@@ -58,5 +58,6 @@ newTransactionTest.addBlock(new Block(2,"20/10/2023",{amount:20000, from:"David 
 console.log("Block Chain Status : " + newTransactionTest.chainValidate());
 
 newTransactionTest.chain[1].data = {amount:100000, from:"Paylite Counter",to:"Diana Sandia",message:"Witdrawal Account Wallet"} // test tampering merubah transaksi
+newTransactionTest.chain[1].hash = newTransactionTest.chain[1].calculateHash(); // merubah hash data
 console.log("Block Chain Status : " + newTransactionTest.chainValidate());
 // console.log(JSON.stringify(newTransactionTest));
