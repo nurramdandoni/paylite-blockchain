@@ -56,4 +56,7 @@ newTransactionTest.addBlock(new Block(1,"20/10/2023",{amount:10000, from:"Paylit
 newTransactionTest.addBlock(new Block(2,"20/10/2023",{amount:20000, from:"David Beckam",to:"Paylite Counter",message:"Deposit Account Wallet"}));
 
 console.log("Block Chain Status : " + newTransactionTest.chainValidate());
+
+newTransactionTest.chain[1].data = {amount:100000, from:"Paylite Counter",to:"Diana Sandia",message:"Witdrawal Account Wallet"} // test tampering merubah transaksi
+console.log("Block Chain Status : " + newTransactionTest.chainValidate());
 // console.log(JSON.stringify(newTransactionTest));
