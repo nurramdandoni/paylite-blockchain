@@ -54,7 +54,7 @@ class Blockchain{
         return this.chain[this.chain.length - 1];
     }
 
-    minePendingTransaction(minningRewardAdress){
+    minePendingTransactions(minningRewardAdress){
         let block = new Block(Date.now(), this.pendingTransactions, this.getLatestBlock().hash);
         block.mineBlock(this.dificulty);
 
@@ -70,7 +70,7 @@ class Blockchain{
         this.pendingTransactions.push(transaction);
     }
 
-    getBalanceOfAdress(address){
+    getBalanceOfAddress(address){
         let balance = 0;
         for(const block of this.chain){
             for(const trans of block.transactions){
@@ -87,7 +87,7 @@ class Blockchain{
         return balance;
     }
 
-    chainValidate(){
+    isChainValid(){
         for(let i = 1; i < this.chain.length; i++){
             const currentBlock = this.chain[i];
             const preveousBlock = this.chain[i - 1];
@@ -105,16 +105,22 @@ class Blockchain{
 
     
 }
-let newTransactionTest = new Blockchain(); // membuat genesis block
+// Contoh penggunaan blockchain
+const myCoin = new Blockchain();
 
-console.log("pending transaction : "+ JSON.stringify(newTransactionTest.pendingTransactions));
-newTransactionTest.createTransaction(new Transaction("kardo-12345", "doni-12345", "25000", "bayar bubur"));
-console.log("pending transaction : "+ JSON.stringify(newTransactionTest.pendingTransactions));
-console.log("saldo rudi sebelum minning: " + newTransactionTest.getBalanceOfAdress("rudi-12345") + " Paylite Coin");
-newTransactionTest.minePendingTransaction("rudi-12345");
-newTransactionTest.minePendingTransaction("rudi-12345");
-console.log("saldo rudi setelah minning kedua dan seterusnya: " + newTransactionTest.getBalanceOfAdress("rudi-12345") + " Paylite Coin");
-console.log("pending transaction : "+ JSON.stringify(newTransactionTest.pendingTransactions) + "Paylite Coin");
-console.log("blockchain transaction : "+ JSON.stringify(newTransactionTest.chain));
+myCoin.createTransaction(new Transaction('address1', 'address2', 100));
+myCoin.createTransaction(new Transaction('address2', 'address1', 50));
 
-console.log("apakah rantai valid? "+ newTransactionTest.chainValidate());
+console.log('Memulai proses penambangan...');
+myCoin.minePendingTransactions('my-reward-address');
+
+console.log('\nSaldo alamat address1: ' + myCoin.getBalanceOfAddress('address1'));
+console.log('Saldo alamat address2: ' + myCoin.getBalanceOfAddress('address2'));
+console.log('Saldo alamat my-reward-address: ' + myCoin.getBalanceOfAddress('my-reward-address'));
+
+console.log('\nMemulai proses penambangan lagi...');
+myCoin.minePendingTransactions('my-reward-address');
+
+console.log('\nSaldo alamat my-reward-address setelah penambangan kedua: ' + myCoin.getBalanceOfAddress('my-reward-address'));
+
+console.log('\nIs blockchain valid? ' + myCoin.isChainValid());
