@@ -1,18 +1,26 @@
-// blockchain sederhana sampai minning new block
+// 
 const SHA256 = require('crypto-js/sha256');
 
+class Transaction{
+    constructor(fromAddress,toAddress, amount, message = ''){
+        this.fromAddress = fromAddress;
+        this.toAddress = toAddress;
+        this.amount = amount;
+        this.message = message;
+    }
+
+}
 class Block{
-    constructor(index, timestamp, data, preveousHash = ''){
-        this.index = index;
+    constructor(timestamp, transactions, preveousHash = ''){
         this.timestamp = timestamp;
-        this.data = data;
+        this.transactions = transactions;
         this.preveousHash = preveousHash;
         this.hash = this.calculateHash();
         this.nounce = 0;
     }
 
     calculateHash(){
-        return SHA256(this.index + this.preveousHash + this.timestamp + JSON.stringify(this.data) + this.nounce).toString();
+        return SHA256(this.index + this.preveousHash + this.timestamp + JSON.stringify(this.transactions) + this.nounce).toString();
     }
 
     sleep(ms) {
@@ -34,20 +42,49 @@ class Blockchain{
     constructor(){
         this.chain = [this.createGenesisBlock()];
         this.dificulty = 2;
+        this.pendingTransactions = [];
+        this.minningReward = 5;
     }
 
     createGenesisBlock(){
-        return new Block(0, "20/10/2023", "Blok Pertama Paylite");
+        return new Block("20/10/2023", "Blok Pertama Paylite", "0");
     }
 
     getLatestBlock(){
         return this.chain[this.chain.length - 1];
     }
 
-    addBlock(newBlock){
-        newBlock.preveousHash = this.getLatestBlock().hash;
-        newBlock.mineBlock(this.dificulty);
-        this.chain.push(newBlock);
+    minePendingTransaction(minningRewardAdress){
+        let block = new Block(Date.now(), this.pendingTransactions, this.getLatestBlock().hash);
+        block.mineBlock(this.dificulty);
+
+        console.log("Block Successfully Mined!");
+        this.chain.push(block);
+
+        this.pendingTransactions = [
+            new Transaction(null, minningRewardAdress, this.minningReward)
+        ];
+    }
+
+    createTransaction(transaction){
+        this.pendingTransactions.push(transaction);
+    }
+
+    getBalanceOfAdress(address){
+        let balance = 0;
+        for(const block of this.chain){
+            for(const trans of block.transactions){
+                if(trans.fromAddress === address){
+                    balance -= trans.amount;
+                }
+
+                if(trans.toAddress === address){
+                    balance += trans.amount;
+                }
+            }
+        }
+
+        return balance;
     }
 
     chainValidate(){
@@ -69,15 +106,15 @@ class Blockchain{
     
 }
 let newTransactionTest = new Blockchain(); // membuat genesis block
-console.log("minning BLock 1 ... ");
-console.log("Block Chain Status : " + newTransactionTest.chainValidate());
-newTransactionTest.addBlock(new Block(1,"20/10/2023",{amount:10000, from:"Paylite Counter",to:"Diana Sandia",message:"Witdrawal Account Wallet"}));
-console.log("minning BLock 2 ... ");
-console.log("Block Chain Status : " + newTransactionTest.chainValidate());
-newTransactionTest.addBlock(new Block(2,"20/10/2023",{amount:20000, from:"David Beckam",to:"Paylite Counter",message:"Deposit Account Wallet"}));
 
+console.log("pending transaction : "+ JSON.stringify(newTransactionTest.pendingTransactions));
+newTransactionTest.createTransaction(new Transaction("kardo-12345", "doni-12345", "25000", "bayar bubur"));
+console.log("pending transaction : "+ JSON.stringify(newTransactionTest.pendingTransactions));
+console.log("saldo rudi sebelum minning: " + newTransactionTest.getBalanceOfAdress("rudi-12345") + " Paylite Coin");
+newTransactionTest.minePendingTransaction("rudi-12345");
+newTransactionTest.minePendingTransaction("rudi-12345");
+console.log("saldo rudi setelah minning kedua dan seterusnya: " + newTransactionTest.getBalanceOfAdress("rudi-12345") + " Paylite Coin");
+console.log("pending transaction : "+ JSON.stringify(newTransactionTest.pendingTransactions) + "Paylite Coin");
+console.log("blockchain transaction : "+ JSON.stringify(newTransactionTest.chain));
 
-// newTransactionTest.chain[1].data = {amount:100000, from:"Paylite Counter",to:"Diana Sandia",message:"Witdrawal Account Wallet"} // test tampering merubah transaksi
-// newTransactionTest.chain[1].hash = newTransactionTest.chain[1].calculateHash(); // merubah hash data
-// console.log("Block Chain Status : " + newTransactionTest.chainValidate());
-// console.log(JSON.stringify(newTransactionTest));
+console.log("apakah rantai valid? "+ newTransactionTest.chainValidate());
