@@ -7,16 +7,32 @@ class Block{
         this.data = data;
         this.preveousHash = preveousHash;
         this.hash = this.calculateHash();
+        this.nounce = 0;
     }
 
     calculateHash(){
-        return SHA256(this.index + this.preveousHash + this.timestamp + JSON.stringify(this.data)).toString();
+        return SHA256(this.index + this.preveousHash + this.timestamp + JSON.stringify(this.data) + this.nounce).toString();
+    }
+
+    sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async mineBlock(dificulty){
+        while(this.hash.substring(0, dificulty) !== Array(dificulty + 1).join("0")){
+            this.nounce++;
+            this.hash = this.calculateHash();
+            console.log("calculate nounce : "+ this.nounce + " hash : "+ this.hash);
+            await this.sleep(100);
+        }
+        console.log("Block Mined: "+ this.hash);
     }
 }
 
 class Blockchain{
     constructor(){
         this.chain = [this.createGenesisBlock()];
+        this.dificulty = 2;
     }
 
     createGenesisBlock(){
@@ -29,7 +45,7 @@ class Blockchain{
 
     addBlock(newBlock){
         newBlock.preveousHash = this.getLatestBlock().hash;
-        newBlock.hash = newBlock.calculateHash();
+        newBlock.mineBlock(this.dificulty);
         this.chain.push(newBlock);
     }
 
@@ -52,12 +68,15 @@ class Blockchain{
     
 }
 let newTransactionTest = new Blockchain(); // membuat genesis block
+console.log("minning BLock 1 ... ");
+console.log("Block Chain Status : " + newTransactionTest.chainValidate());
 newTransactionTest.addBlock(new Block(1,"20/10/2023",{amount:10000, from:"Paylite Counter",to:"Diana Sandia",message:"Witdrawal Account Wallet"}));
+console.log("minning BLock 2 ... ");
+console.log("Block Chain Status : " + newTransactionTest.chainValidate());
 newTransactionTest.addBlock(new Block(2,"20/10/2023",{amount:20000, from:"David Beckam",to:"Paylite Counter",message:"Deposit Account Wallet"}));
 
-console.log("Block Chain Status : " + newTransactionTest.chainValidate());
 
-newTransactionTest.chain[1].data = {amount:100000, from:"Paylite Counter",to:"Diana Sandia",message:"Witdrawal Account Wallet"} // test tampering merubah transaksi
-newTransactionTest.chain[1].hash = newTransactionTest.chain[1].calculateHash(); // merubah hash data
-console.log("Block Chain Status : " + newTransactionTest.chainValidate());
+// newTransactionTest.chain[1].data = {amount:100000, from:"Paylite Counter",to:"Diana Sandia",message:"Witdrawal Account Wallet"} // test tampering merubah transaksi
+// newTransactionTest.chain[1].hash = newTransactionTest.chain[1].calculateHash(); // merubah hash data
+// console.log("Block Chain Status : " + newTransactionTest.chainValidate());
 // console.log(JSON.stringify(newTransactionTest));
