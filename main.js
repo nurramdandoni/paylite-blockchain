@@ -33,10 +33,27 @@ class Blockchain{
         this.chain.push(newBlock);
     }
 
+    chainValidate(){
+        for(let i = 1; i < this.chain.length; i++){
+            const currentBlock = this.chain[i];
+            const preveousBlock = this.chain[i - 1];
+
+            if(currentBlock.hash !== currentBlock.calculateHash()){
+                return false;
+            }
+
+            if(currentBlock.preveousHash !== preveousBlock.hash){
+                return false;
+            }
+        }
+        return true;
+    }
+
     
 }
 let newTransactionTest = new Blockchain(); // membuat genesis block
 newTransactionTest.addBlock(new Block(1,"20/10/2023",{amount:10000, from:"Paylite Counter",to:"Diana Sandia",message:"Witdrawal Account Wallet"}));
 newTransactionTest.addBlock(new Block(2,"20/10/2023",{amount:20000, from:"David Beckam",to:"Paylite Counter",message:"Deposit Account Wallet"}));
 
-console.log(JSON.stringify(newTransactionTest));
+console.log("Block Chain Status : " + newTransactionTest.chainValidate());
+// console.log(JSON.stringify(newTransactionTest));
