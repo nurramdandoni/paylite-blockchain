@@ -19,6 +19,7 @@
   "homepage": "https://github.com/nurramdandoni/paylite-blockchain#readme",
   "dependencies": {
     "crypto-js": "^4.1.1",
+    "elliptic": "^6.5.4",
     "express": "^4.18.2",
     "express-sse": "^0.5.3"
   }
